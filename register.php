@@ -12,6 +12,7 @@
     // Запуск сессии
     session_start();
 
+    
     //Получаем файлы
     $users_json = file_get_contents('users.json');
     $arr_users = json_decode($users_json, 1);
