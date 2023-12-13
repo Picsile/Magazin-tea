@@ -22,7 +22,7 @@ class Tea
         echo "<b>".$this->name, "</b><br>";
         echo " <p><b>Описание: </b>".$this->description, "</p><br>";
         if (!empty($this->imageUrl)) {
-            echo '<img src="' . $this->imageUrl . '" alt="" width = "600" height="1800">', "<br>";
+            echo '<img src="' . $this->imageUrl . '" alt="" width = "400" height="300">', "<br>";
         }
         echo "Цена: ".$this->price."руб<br>";
         if (!empty($this->offer)) {
