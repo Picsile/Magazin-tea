@@ -42,9 +42,9 @@
             Введите логин: <br>
             <input required name="login"></input> <br>
             Введите пароль: <br>
-            <input required name="password1"></input> <br>
+            <input type="password" required name="password1"></input> <br>
             Подтверждение пароля: <br>
-            <input required name="password2"></input> <br>
+            <input type="password" required name="password2"></input> <br>
 
             <?php
             if ($password_true == '<div class = "warning">Введенные пароли не совпадают</div>') {

@@ -59,7 +59,7 @@
                 Введите логин: <br>
                 <input required name="login"></input> <br>
                 Введите пароль: <br>
-                <input required name="password"></input> <br>
+                <input type="password" required name="password"></input> <br>
                 <input value = "Войти" type="submit"></input>
                 <div class="butten">
                     <a class="link" href="register.php">Зарегестрироваться</a>
