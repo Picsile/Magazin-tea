@@ -1,1 +1,49 @@
-[{"name":"\u0412\u0430\u0441\u044f","login":"vasya212","password":"d76ewrE3w@Sd2","email":"vasya@example.com","role":"user"},{"name":"\u041f\u0435\u0442\u044f","login":"petya123","password":"qwe45RtY@1","email":"petya@example.com","role":"user"},{"name":"\u0410\u0434\u043c\u0438\u043d","login":"admin123","password":"Pass123","email":"admin@example.com","role":"admin"},{"name":"\u0420\u043e\u0441\u0442\u0438\u0441\u043b\u0430\u0432","email":"rostfil2@gmail.com","login":"Pobeditel","password":"123","role":"user"}]
+[
+    {
+        "name": "\u0412\u0430\u0441\u044f",
+        "login": "vasya212",
+        "password": "d76ewrE3w@Sd2",
+        "email": "vasya@example.com",
+        "role": "user",
+        "favourites": []
+    },
+    {
+        "name": "\u041f\u0435\u0442\u044f",
+        "login": "petya123",
+        "password": "qwe45RtY@1",
+        "email": "petya@example.com",
+        "role": "user",
+        "favourites": []
+    },
+    {
+        "name": "\u0410\u0434\u043c\u0438\u043d",
+        "login": "admin123",
+        "password": "adminPass123",
+        "email": "admin@example.com",
+        "role": "admin"
+    },
+    {
+        "name": "\u0420\u043e\u0441\u0442\u0438\u0441\u043b\u0430\u0432",
+        "email": "rostfil2@gmail.com",
+        "login": "Pobeditel",
+        "password": "123",
+        "role": "user",
+        "favourites": []
+    },
+    {
+        "name": "\u041a\u043e\u0441\u0442\u044f",
+        "email": "\u0444\u0444",
+        "login": "Kosty123",
+        "password": "1234",
+        "role": "user",
+        "favourites": [
+            "7",
+            "1",
+            "3",
+            "4",
+            "10",
+            "5",
+            "6"
+        ]
+    }
+]

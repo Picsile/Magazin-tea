@@ -22,9 +22,13 @@
     // Проверка пароля и запись пользователя
     if (!empty($_POST)) {
         if ($_POST['password1'] === $_POST['password2']) {
-            $arr_users[] = ['name' => $_POST['name'], 'email' => $_POST['email'], 'login' => $_POST['login'], 'password' => $_POST['password1'], 'role' => 'user'];
+            $arr_users[] = ['name' => $_POST['name'], 'email' => $_POST['email'], 'login' => $_POST['login'], 'password' => $_POST['password1'], 'role' => 'user', "favourites" => []];
             $password_true = 1;
+
+            $_SESSION['reg_check'] = true;
+            // $_SESSION['login'] = $_POST['login'];
             $_SESSION['role'] = 'user';
+
         } else $password_true = '<div class = "warning">Введенные пароли не совпадают</div>'; 
     }
 

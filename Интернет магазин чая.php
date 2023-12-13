@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,11 +15,13 @@
 
     <?php
     // Запуск сессии
-    session_start();
+    
 
     // Переменные
-    if (!isset($_SESSION['reg_check'])) $_SESSION['reg_check'] = false;
-    if (!isset($_SESSION['role'])) $_SESSION['role'] = 'none';
+    if (!isset($_SESSION['reg_check']))
+        $_SESSION['reg_check'] = false;
+    if (!isset($_SESSION['role']))
+        $_SESSION['role'] = 'none';
 
     // Регистреция классов
     spl_autoload_register();
@@ -28,31 +34,34 @@
     $arr_tea = json_decode($tea_json, 1);
 
     // Авторизация
+    
+    // Проверка авторизации
+    if (isset($_GET['login']) and isset($_GET['password'])) {
+        foreach ($arr_users as $user) {
+            if ($_GET['login'] == $user['login']) {
+                if ($_GET['password'] == $user['password']) {
+                    echo "<div class = 'h1'><h1>Привет " . $user['name'] . "!</h1></div>";
 
-        // Проверка авторизации
-        if (isset($_GET['login']) and isset($_GET['password'])) {
-            foreach ($arr_users as $user) {
-                if ($_GET['login'] == $user['login']) {
-                    if ($_GET['password'] == $user['password']) {
-                        echo "<div class = 'h1'><h1>Привет " . $user['name'] . "!</h1></div>";
-                        $_SESSION['reg_check'] = true;
-                        $_SESSION['role'] = $user['role'];
-                    } else
-                        echo 'Неправильный логин или пароль';
-                }
+                    $_SESSION['reg_check'] = true;
+                    $_SESSION['login'] = $user['login'];
+                    $_SESSION['role'] = $user['role'];
+
+                } else
+                    echo 'Неправильный логин или пароль';
             }
         }
+    }
 
-        // Гет запрос
-        if (!empty($_GET['session'])) {
-            $_SESSION['reg_check'] = false;
-            $_SESSION['role'] = 'none';
-            $_GET['session'] = '';
-        }
+    // Гет запрос для выхода
+    if (!empty($_GET['session'])) {
+        $_SESSION['reg_check'] = false;
+        $_SESSION['role'] = 'none';
+        $_GET['session'] = '';
+    }
 
-        // Форма
-        if ($_SESSION['reg_check'] == false) {
-    ?>
+    // Форма
+    if ($_SESSION['reg_check'] == false) {
+        ?>
         <div class="form_reg">
             <form action="" method="GET">
                 <b>Авторизация</b> <br>
@@ -60,13 +69,13 @@
                 <input required name="login"></input> <br>
                 Введите пароль: <br>
                 <input type="password" required name="password"></input> <br>
-                <input value = "Войти" type="submit"></input>
+                <input value="Войти" type="submit"></input>
                 <div class="butten">
                     <a class="link" href="register.php">Зарегестрироваться</a>
                 </div>
         </div>
         </form>
-    <?php
+        <?php
     }
 
     // Тело сайта
@@ -75,7 +84,7 @@
     // Создание объектов массива
     $ObjectTea = [];
     foreach ($arr_tea as $tea) {
-        $ObjectTea[] = new Tea($tea['name'], $tea['description'], $tea['category'], $tea['price'], $tea['imageUrl'], $tea['stock'], $tea['offer']);
+        $ObjectTea[] = new Tea($tea['name'], $tea['description'], $tea['category'], $tea['price'], $tea['imageUrl'], $tea['stock'], $tea['offer'], $tea['id']);
     }
 
     // Создание массива с категориями
@@ -88,11 +97,28 @@
 
     if ($_SESSION['reg_check'] != false) {
 
-        // Гет запрос
+        // Гет запрос для admin
         if (isset($_GET['admin'])) {
-            echo '<h1>dmin</h1>';
             unset($arr_tea[$_GET['admin']]);
             $arr_tea = array_values($arr_tea);
+        }
+
+        // Гет запрос для user
+        if (isset($_GET['user'])) {
+            foreach ($arr_users as $key => $user) {
+                if ($user['login'] == $_SESSION['login']) {
+                    $user_key = $key;
+                }
+            }
+
+            if (array_search($_GET['user'], $arr_users[$user_key]['favourites']) == false) {
+                if ($arr_users[$user_key]['favourites'][0] != $_GET['user']) {
+                    $arr_users[$user_key]['favourites'][] = $_GET['user'];
+
+                    $users_json = json_encode($arr_users);
+                    file_put_contents('users.json', $users_json);
+                }
+            }
         }
 
         // Проверка формы
@@ -105,7 +131,7 @@
             if (!empty($_POST['offer'])) {
                 $offer = $_POST['offer'];
             } else
-                $offer = 'false';
+                $offer = false;
 
             if (!empty($_POST['stock'])) {
                 $stock = $_POST['stock'];
@@ -117,16 +143,29 @@
             } else
                 $category = $_POST['category'];
 
+            $same = 1;
+            while ($same == 1) {
+                $id = rand(1, 1000);
+                $same = 0;
+                foreach ($arr_tea as $tea) {
+                    if ($tea['id'] == $id) {
+                        $same = 1;
+                    }
+                }
+                if ($same == 0) {
+                    break;
+                }
+            }
 
-            $ObjectTea[] = new Tea($_POST['name'], $_POST['description'], $category, $_POST['price'], $imageUrl, $_POST['stock'], $offer);
+            $ObjectTea[] = new Tea($_POST['name'], $_POST['description'], $category, $_POST['price'], $imageUrl, $_POST['stock'], $offer, $id);
 
-            $arr_tea[] = ['name' => $_POST['name'], 'description' => $_POST['description'], 'category' => $category, 'price' => $_POST['price'], 'imageUrl' => $imageUrl, 'stock' => $stock, 'offer' => $offer];
+            $arr_tea[] = ['name' => $_POST['name'], 'description' => $_POST['description'], 'category' => $category, 'price' => $_POST['price'], 'imageUrl' => $imageUrl, 'stock' => $stock, 'offer' => $offer, 'id' => $id,];
         }
     }
 
     // Форма
     if ($_SESSION['role'] == 'admin') {
-    ?>
+        ?>
         <div class="form">
             <form action="" method="POST">
                 <b>Форма добавления нового чая</b> <br>
@@ -169,19 +208,19 @@
 
                 // Проверка на роль
                 if ($_SESSION['role'] == 'admin') {
-        ?>
+                    ?>
                     <div class="butten">
                         <a class="link" href="?admin=<?= $key ?>">Удалить товар</a> <br>
                     </div>
-                <?php
+                    <?php
                 }
 
                 if ($_SESSION['role'] == 'user') {
-                ?>
+                    ?>
                     <div class="butten">
-                        <a class="link" href="?user=<?= $key ?>">Добавить в избранное</a> <br>
+                        <a class="link" href="?user=<?= $Object->getId() ?>">Добавить в избранное</a> <br>
                     </div>
-        <?php
+                    <?php
                 }
 
                 echo '</div>';
@@ -192,9 +231,11 @@
 
     // Обновление товаров
     if ($_SESSION['role'] == 'admin') {
-        ?><div class = "center">
-            <b><a class = "link2" href="Интернет магазин чая.php">Обновить список</a></b>
-        </div><?php
+        ?>
+        <div class="center">
+            <b><a class="link2" href="Интернет магазин чая.php">Обновить список</a></b>
+        </div>
+        <?php
     }
 
     // Перезапись файла
@@ -206,11 +247,10 @@
         ?>
 
         <!-- Выход из сессии -->
-
         <div class="session">
             <a class="link" href="?session='1'">Выход из сессии</a>
         </div>
-    <?php
+        <?php
     }
     ?>
 
@@ -311,7 +351,8 @@
             width: 300px;
         }";
         }
-        ?>.form {
+        ?>
+        .form {
             position: fixed;
             top: 30px;
             left: 2%;
