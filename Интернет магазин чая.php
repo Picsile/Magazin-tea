@@ -14,14 +14,13 @@ session_start();
 <body bgcolor="wheat">
 
     <?php
-    // Запуск сессии
-    
 
     // Переменные
     if (!isset($_SESSION['reg_check']))
         $_SESSION['reg_check'] = false;
     if (!isset($_SESSION['role']))
         $_SESSION['role'] = 'none';
+    $error_password = 0;
 
     // Регистреция классов
     spl_autoload_register();
@@ -40,14 +39,17 @@ session_start();
         foreach ($arr_users as $user) {
             if ($_GET['login'] == $user['login']) {
                 if ($_GET['password'] == $user['password']) {
-                    echo "<div class = 'h1'><h1>Привет " . $user['name'] . "!</h1></div>";
 
+                    $error_password = 0;
+                    // echo "<div class = 'h1'><h1>Привет " . $user['name'] . "!</h1></div>";
+    
                     $_SESSION['reg_check'] = true;
                     $_SESSION['login'] = $user['login'];
                     $_SESSION['role'] = $user['role'];
+                    $_SESSION['name'] = $user['name'];
 
                 } else
-                    echo 'Неправильный логин или пароль';
+                    $error_password = 1;
             }
         }
     }
@@ -69,6 +71,13 @@ session_start();
                 <input required name="login"></input> <br>
                 Введите пароль: <br>
                 <input type="password" required name="password"></input> <br>
+
+                <?php
+                if ($error_password) {
+                    echo '<div class = "link2">Неправильный логин или пароль</div>';
+                }
+                ?>
+
                 <input value="Войти" type="submit"></input>
                 <div class="butten">
                     <a class="link" href="register.php">Зарегестрироваться</a>
@@ -80,6 +89,28 @@ session_start();
 
     // Тело сайта
     echo '<div class = "main">';
+
+    // Гет запрос для admin
+    if (isset($_GET['admin'])) {
+        unset($arr_tea[$_GET['admin']]);
+        $arr_tea = array_values($arr_tea);
+    }
+
+    // Гет запрос для user
+    if (isset($_GET['user'])) {
+        foreach ($arr_users as $key => $user) {
+            if ($user['login'] == $_SESSION['login']) {
+                $user_key = $key;
+            }
+        }
+
+        if (in_array($_GET['user'], $arr_users[$user_key]['favourites']) == false) {
+            $arr_users[$user_key]['favourites'][] = $_GET['user'];
+
+            $users_json = json_encode($arr_users);
+            file_put_contents('users.json', $users_json);
+        }
+    }
 
     // Создание объектов массива
     $ObjectTea = [];
@@ -95,30 +126,11 @@ session_start();
         }
     }
 
-    if ($_SESSION['reg_check'] != false) {
+    if ($_SESSION['reg_check'] == true) {
 
-        // Гет запрос для admin
-        if (isset($_GET['admin'])) {
-            unset($arr_tea[$_GET['admin']]);
-            $arr_tea = array_values($arr_tea);
-        }
-
-        // Гет запрос для user
-        if (isset($_GET['user'])) {
-            foreach ($arr_users as $key => $user) {
-                if ($user['login'] == $_SESSION['login']) {
-                    $user_key = $key;
-                }
-            }
-
-            if (array_search($_GET['user'], $arr_users[$user_key]['favourites']) == false) {
-                if ($arr_users[$user_key]['favourites'][0] != $_GET['user']) {
-                    $arr_users[$user_key]['favourites'][] = $_GET['user'];
-
-                    $users_json = json_encode($arr_users);
-                    file_put_contents('users.json', $users_json);
-                }
-            }
+        // Приветствие
+        if ($_SESSION['reg_check'] == true) {
+            echo "<div class = 'h1'><h1>Привет " . $_SESSION['name'] . "!</h1></div>";
         }
 
         // Проверка формы
@@ -229,15 +241,6 @@ session_start();
         echo '</div>';
     }
 
-    // Обновление товаров
-    if ($_SESSION['role'] == 'admin') {
-        ?>
-        <div class="center">
-            <b><a class="link2" href="Интернет магазин чая.php">Обновить список</a></b>
-        </div>
-        <?php
-    }
-
     // Перезапись файла
     $tea_json = json_encode($arr_tea);
     file_put_contents('tea.json', $tea_json);
@@ -250,8 +253,21 @@ session_start();
         <div class="session">
             <a class="link" href="?session='1'">Выход из сессии</a>
         </div>
+
         <?php
     }
+
+    if ($_SESSION['role'] == 'user') {
+        ?>
+
+        <!-- Избранное -->
+        <div class="main_out">
+            <a class="link" href="favourites.php">Избранное</a>
+        </div>
+
+        <?php
+    }
+
     ?>
 
     <!-- Стили -->
@@ -414,6 +430,20 @@ session_start();
             top: 56em;
             text-align: center;
             right: 5px;
+            width: 250px;
+            height: auto;
+            background-color: #4169E1;
+            margin: 10px auto 0px auto;
+            padding: 2px;
+            border-radius: 10px;
+            border: 1px solid black;
+        }
+
+        .main_out {
+            position: fixed;
+            top: 56em;
+            text-align: center;
+            left: 5px;
             width: 250px;
             height: auto;
             background-color: #4169E1;
