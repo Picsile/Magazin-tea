@@ -33,14 +33,17 @@ session_start();
         // Регистреция классов
         spl_autoload_register();
 
+        // Приветствие
+        if ($_SESSION['reg_check'] == true) {
+            echo "<div class = 'h1'><h1>Привет " . $_SESSION['name'] . "!</h1></div>";
+        }
+
         // Находим пользователя в списке users
         foreach ($arr_users as $user) {
             if ($user['login'] == $_SESSION['login']) {
                 $number = array_search($user, $arr_users);
             }
         }
-
-
 
         // Гет запрос для user_delite
         if (isset($_GET['user_delite'])) {
@@ -66,9 +69,6 @@ session_start();
                 $categories[] = $tea['category'];
             }
         }
-
-
-
         // Ввывод объектов
         $est_izbranoe = 0;
         foreach ($categories as $category) {
@@ -110,7 +110,7 @@ session_start();
 
         <!-- Выход из сессии -->
         <div class="session">
-            <a class="link" href="?session='1'">Выход из сессии</a>
+            <a class="link" href="?session='1'">Выход из акаунта</a>
         </div>
 
         <!-- На главную -->
@@ -143,6 +143,16 @@ session_start();
         body {
             background-image: url(Фон.jpg);
             background-size: 20%;
+        }
+
+        .h1 {
+            width: 350px;
+            background-color: white;
+            text-align: center;
+            color: #9932CC;
+            margin: 3% auto 2%;
+            border: 2px solid black;
+            border-radius: 10px;
         }
 
         .tea {
@@ -230,7 +240,7 @@ session_start();
             top: 56em;
             text-align: center;
             left: 5px;
-            width: 250px;
+            width: 180px;
             height: auto;
             background-color: #4169E1;
             margin: 10px auto 0px auto;

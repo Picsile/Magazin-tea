@@ -20,7 +20,7 @@ session_start();
         $_SESSION['reg_check'] = false;
     if (!isset($_SESSION['role']))
         $_SESSION['role'] = 'none';
-    $error_password = 0;
+        $error_password = 0;
 
     // Регистреция классов
     spl_autoload_register();
@@ -36,20 +36,18 @@ session_start();
     
     // Проверка авторизации
     if (isset($_GET['login']) and isset($_GET['password'])) {
+        $error_password = 1;
         foreach ($arr_users as $user) {
             if ($_GET['login'] == $user['login']) {
                 if ($_GET['password'] == $user['password']) {
-
-                    $error_password = 0;
-                    // echo "<div class = 'h1'><h1>Привет " . $user['name'] . "!</h1></div>";
+                    
+                    $error_password = 0; 
     
                     $_SESSION['reg_check'] = true;
                     $_SESSION['login'] = $user['login'];
                     $_SESSION['role'] = $user['role'];
                     $_SESSION['name'] = $user['name'];
-
-                } else
-                    $error_password = 1;
+                }
             }
         }
     }
@@ -118,14 +116,6 @@ session_start();
         $ObjectTea[] = new Tea($tea['name'], $tea['description'], $tea['category'], $tea['price'], $tea['imageUrl'], $tea['stock'], $tea['offer'], $tea['id']);
     }
 
-    // Создание массива с категориями
-    $categories = [];
-    foreach ($arr_tea as $tea) {
-        if (!array_search($tea['category'], $categories)) {
-            $categories[] = $tea['category'];
-        }
-    }
-
     if ($_SESSION['reg_check'] == true) {
 
         // Приветствие
@@ -155,19 +145,7 @@ session_start();
             } else
                 $category = $_POST['category'];
 
-            $same = 1;
-            while ($same == 1) {
-                $id = rand(1, 1000);
-                $same = 0;
-                foreach ($arr_tea as $tea) {
-                    if ($tea['id'] == $id) {
-                        $same = 1;
-                    }
-                }
-                if ($same == 0) {
-                    break;
-                }
-            }
+            $id = $arr_tea[array_key_last($arr_tea)]['id'] + 1;
 
             $ObjectTea[] = new Tea($_POST['name'], $_POST['description'], $category, $_POST['price'], $imageUrl, $_POST['stock'], $offer, $id);
 
@@ -207,6 +185,14 @@ session_start();
             </form>
         </div>
         <?php
+    }
+
+    // Создание массива с категориями
+    $categories = [];
+    foreach ($arr_tea as $tea) {
+        if (!array_search($tea['category'], $categories)) {
+            $categories[] = $tea['category'];
+        }
     }
 
     // Ввывод объектов
@@ -251,7 +237,7 @@ session_start();
 
         <!-- Выход из сессии -->
         <div class="session">
-            <a class="link" href="?session='1'">Выход из сессии</a>
+            <a class="link" href="?session='1'">Выход из акаунта</a>
         </div>
 
         <?php
@@ -430,7 +416,7 @@ session_start();
             top: 56em;
             text-align: center;
             right: 5px;
-            width: 250px;
+            width: 230px;
             height: auto;
             background-color: #4169E1;
             margin: 10px auto 0px auto;
@@ -444,7 +430,7 @@ session_start();
             top: 56em;
             text-align: center;
             left: 5px;
-            width: 250px;
+            width: 160px;
             height: auto;
             background-color: #4169E1;
             margin: 10px auto 0px auto;

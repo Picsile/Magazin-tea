@@ -18,64 +18,83 @@
 
     // Переменные
     $password_true = 0;
+    $a = 0;
+    $polsovatel_naiden = '';
+
+
 
     // Проверка пароля и запись пользователя
     if (!empty($_POST)) {
-        if ($_POST['password1'] === $_POST['password2']) {
-            $arr_users[] = ['name' => $_POST['name'], 'email' => $_POST['email'], 'login' => $_POST['login'], 'password' => $_POST['password1'], 'role' => 'user', "favourites" => []];
-            $password_true = 1;
 
-            $_SESSION['reg_check'] = true;
-            // $_SESSION['login'] = $_POST['login'];
-            $_SESSION['role'] = 'user';
+        // Находим пользователя в списке users
+        foreach ($arr_users as $user) {
+            if ($user['login'] == $_POST['login']) {
+                $a = 1;
+            }
+        }
 
-        } else $password_true = '<div class = "warning">Введенные пароли не совпадают</div>'; 
+        if (!$a) {
+
+            if ($_POST['password1'] === $_POST['password2']) {
+                $arr_users[] = ['name' => $_POST['name'], 'email' => $_POST['email'], 'login' => $_POST['login'], 'password' => $_POST['password1'], 'role' => 'user', "favourites" => []];
+                $password_true = 1;
+
+                $_SESSION['reg_check'] = true;
+                // $_SESSION['login'] = $_POST['login'];
+                $_SESSION['role'] = 'user';
+            } else $password_true = '<div class = "warning">Введенные пароли не совпадают</div>';
+
+        } else $polsovatel_naiden =  '<div class = "warning">Пользователь уже существует</div>';
     }
 
     // Успешная регистрация
     if ($password_true != 1) {
     ?>
 
-    <div class="form">
-        <form action="" method="POST">
-            <b>Регистрация</b> <br>
-            Введите имя: <br>
-            <input required name="name"></input> <br>
-            Введите email: <br>
-            <input required name="email"></input> <br>
-            Введите логин: <br>
-            <input required name="login"></input> <br>
-            Введите пароль: <br>
-            <input type="password" required name="password1"></input> <br>
-            Подтверждение пароля: <br>
-            <input type="password" required name="password2"></input> <br>
+        <div class="form">
+            <form action="" method="POST">
+                <b>Регистрация</b> <br>
+                Введите имя: <br>
+                <input required name="name"></input> <br>
+                Введите email: <br>
+                <input required name="email"></input> <br>
+                Введите логин: <br>
+                <input required name="login"></input> <br>
+                Введите пароль: <br>
+                <input type="password" required name="password1"></input> <br>
+                Подтверждение пароля: <br>
+                <input type="password" required name="password2"></input> <br>
 
-            <?php
-            if ($password_true == '<div class = "warning">Введенные пароли не совпадают</div>') {
-                echo $password_true;
-            }
-            ?>
+                <?php
+                if ($password_true == '<div class = "warning">Введенные пароли не совпадают</div>') {
+                    echo $password_true;
+                }
 
-            <input type="submit"></input>
+                if ($polsovatel_naiden == '<div class = "warning">Пользователь уже существует</div>') {
+                    echo $polsovatel_naiden;
+                }
+                ?>
 
-            <div class="butten">
-                 <a class="link" href="Интернет магазин чая.php">Перейти на страницу с товарами</a>
-             </div>
-        </form>
+                <input type="submit"></input>
 
-        
-    </div>
+                <div class="butten">
+                    <a class="link" href="Интернет магазин чая.php">Перейти на страницу с товарами</a>
+                </div>
+            </form>
+
+
+        </div>
     <?php
     } else {
     ?>
-    <div class="form">
-    Вы успешно зарегестрированы! <br>
+        <div class="form">
+            Вы успешно зарегестрированы! <br>
 
-    <div class="butten">
-        <a class="link" href="Интернет магазин чая.php">Перейти на страницу с товарами</a>
-    </div>
+            <div class="butten">
+                <a class="link" href="Интернет магазин чая.php">Перейти на страницу с товарами</a>
+            </div>
 
-    </div>
+        </div>
     <?php
     }
     // Перезапись файла
